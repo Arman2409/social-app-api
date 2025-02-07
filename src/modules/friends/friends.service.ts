@@ -32,14 +32,26 @@ export class FriendsService {
             }
 
             //   Check if the friend actually exists 
-            const friend = await this.prisma.user.findUnique({
-                where: {
-                    id: friendId
-                }
-            });
+            const [friend, requests] = await this.prisma.$transaction([
+                this.prisma.user.findUnique({
+                    where: {
+                        id: friendId
+                    }
+                }),
+                this.prisma.friendRequest.findMany({
+                    where: {
+                        fromId: userId,
+                        toId: friendId,
+                    }
+                }),
+            ])
 
             if (!friend) {
                 throw new BadRequestException("User with given ID not found")
+            }
+
+            if (requests.length) {
+                throw new BadRequestException("Request already sent")
             }
 
             await this.prisma.friendRequest.create({

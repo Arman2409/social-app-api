@@ -7,11 +7,14 @@ import { FriendsService } from './friends.service';
 
 @Controller('friends')
 export class FriendsController {
-    constructor(private friendsService: FriendsService) { }
+    constructor(
+        private friendsService: FriendsService
+    ) { }
 
     @Get()
     async getFriends(
         @Res() res: Response,
+        // Get user info from authorization token 
         @Authorization() user: User
     ) {
         return await this.friendsService.getFriends(res, user);

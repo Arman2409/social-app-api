@@ -10,6 +10,7 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import type { Response } from 'express';
 
+import { EXPIRE_HOURS } from '../../configs/authorization';
 import { LoggerService } from '../../tools/services/logger.service';
 import { PrismaService } from '../../tools/services/database.service';
 import { LoginDTO, RegisterDTO } from '../../dto/auth';
@@ -97,7 +98,7 @@ export class AuthService {
                 const { id, firstName, lastName, email, age } = { ...user };
 
                 // Get new expiration date for the token 
-                const expiresIn = Date.now() + 24 * 60 * 60 * 1000;
+                const expiresIn = Date.now() + EXPIRE_HOURS * 60 * 60 * 1000;
 
                 // Get the token 
                 const token = this.jwtService.sign(
@@ -132,6 +133,7 @@ export class AuthService {
             this.logger.error(
                 `Error while signing in the user, user email: ${email}, error: ${error}`,
             );
+
             throw new InternalServerErrorException('Failed to log in');
         }
     }

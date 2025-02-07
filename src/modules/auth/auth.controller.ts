@@ -12,7 +12,7 @@ export class AuthController {
 
   @Post('register')
   async register(
-    @Res() res: Response, 
+    @Res() res: Response,
     @Body() registerDto: RegisterDTO) {
     return this.authService.register(res, registerDto);
   }

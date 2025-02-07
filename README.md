@@ -21,8 +21,7 @@
 - DATABASE_URL: Your PostgreSQL Database url
 - JWT_SECRET: Your Jwt secret
 
-5. After you have functional PostgreSQL database's URL in your .env file you can 
-run this commands to set the database
+5. After you have functional PostgreSQL database's URL in your .env file you can run this commands to set up the database
 ```bash
   npx prisma generate
   npx prisma migrate dev
@@ -37,12 +36,13 @@ run this commands to set the database
 
 /prisma      # Database configuration and schemas  
 /src         # TypeScript codebase  
-  /dto       # DTOs for validation  
-  /modules   # Core modules  
-    /auth    # Handles functionalities like login and register  
-    /users   # Handles functionalities like user search  
-    /friends # Handles functionalities like sending friend requests, accepting them,  etc.  
-  /tools     # Utility services, guards, and other helpers  
+&nbsp;/dto       # DTOs for validation  
+&nbsp;/configs   # Different configuration  
+&nbsp;/modules   # Core modules  
+&nbsp;&nbsp;/auth    # Handles functionalities like login and register  
+&nbsp;&nbsp;/users   # Handles functionalities like user search  
+&nbsp;&nbsp;/friends # Handles functionalities like sending friend &nbsp;&nbsp; requests, accepting them,  etc.  
+&nbsp;/tools     # Utility services, guards, and other helpers  
 
 #### Tech stack
 

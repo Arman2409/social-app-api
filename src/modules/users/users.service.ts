@@ -25,7 +25,7 @@ export class UsersService {
     try {
       // Check for at least one of the queries to be present 
       if (!firstName && !lastName && !email && !age) {
-        throw new BadRequestException('Search queries not provided');
+        throw new BadRequestException('Search query not provided');
       }
 
       // Search the database using the queries from the request  
@@ -39,7 +39,7 @@ export class UsersService {
               ? { lastName: { contains: lastName, mode: 'insensitive' } }
               : {},
             email
-              ? { lastName: { contains: lastName, mode: 'insensitive' } }
+              ? { email: { contains: email, mode: 'insensitive' } }
               : {},
             age ? { age: age } : {},
           ],
