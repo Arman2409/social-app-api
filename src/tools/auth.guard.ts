@@ -8,9 +8,8 @@ import {
 import { JwtService } from '@nestjs/jwt';
 
 export const Authorization = createParamDecorator((_, request: any) => {
-  
   const authorization = request.args[0].rawHeaders[1];
-  const accessToken =  authorization.split(' ')[1];
+  const accessToken = authorization.split(' ')[1];
 
   try {
     const decoded = new JwtService().decode(accessToken);
@@ -25,7 +24,7 @@ export const Authorization = createParamDecorator((_, request: any) => {
 export class AuthGuard implements CanActivate {
   constructor(
     private readonly jwtService: JwtService
-  ) { }
+  ) {}
 
   canActivate(context: ExecutionContext): boolean {
     const request = context.switchToHttp().getRequest();
@@ -39,27 +38,26 @@ export class AuthGuard implements CanActivate {
     try {
       const decoded = this.jwtService.decode(token);
 
-      const { expiresIn = "" } = { ...decoded }
+      const { expiresIn = '' } = { ...decoded };
 
       if (!expiresIn) {
-        throw new UnauthorizedException("Wrong credentials");
+        throw new UnauthorizedException('Wrong credentials');
       }
 
       if (Number(expiresIn) < Date.now()) {
-        throw new UnauthorizedException("Session expired");
+        throw new UnauthorizedException('Session expired');
       }
 
-      request.hello = "Hello"
-      request.res.hello = "Hello"
+      request.hello = 'Hello';
+      request.res.hello = 'Hello';
       request.res.locals = {
-        hello: "Hello"
-      }
-      request.myData = "sdsf"
+        hello: 'Hello',
+      };
+      request.myData = 'sdsf';
 
       return true;
     } catch (error) {
-      throw new UnauthorizedException("Wrong credentials");
+      throw new UnauthorizedException('Wrong credentials');
     }
   }
 }
-

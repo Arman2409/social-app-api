@@ -7,7 +7,7 @@ import { PrismaService } from '../../tools/database.service';
 import { LoggerService } from '../../tools/logger.service';
 
 @Module({
-    providers: [UsersService, JwtService, PrismaService, LoggerService],
-    controllers: [UsersController]
+  providers: [UsersService, JwtService, PrismaService, LoggerService],
+  controllers: [UsersController],
 })
 export class UsersModule {}

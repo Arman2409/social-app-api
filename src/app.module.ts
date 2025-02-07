@@ -13,6 +13,6 @@ import { AuthModule } from './modules/auth/auth.module';
 @Module({
   imports: [AuthModule, UsersModule, FriendsModule],
   controllers: [AppController, UsersController],
-  providers: [JwtService, UsersService, PrismaService, LoggerService]
+  providers: [JwtService, UsersService, PrismaService, LoggerService],
 })
 export class AppModule {}
