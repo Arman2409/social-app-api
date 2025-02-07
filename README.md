@@ -1,117 +1,52 @@
-<h1 style="color: #4CAF50; text-align: center; border-bottom: 3px solid #4CAF50; padding-bottom: 10px;">Social-app-api</h1>
+# Social-app-api 
   
-<h2 style="color: #FF5722; text-align: center; padding-bottom: 5px;">📖 Social application API</h3>
+## 📖 Social application API
 
-<h3 style="color: #03A9F4; text-align: center;  border-bottom: 1px solid #4CAF50;">Controllers</h3> 
+#### Running the project locally
 
-<h4>🧭 Controller: / </h4>
-
-#### 📌 Endpoints:
-
-- **Path**: 
-- **Method**: Get
-
-
-
-<h4>🧭 Controller: /auth </h4>
-
-#### 📌 Endpoints:
-
-- **Path**: 'register'
-- **Method**: Post
-- **Entries**:
-  
-    - **Name**: 
-      - **Type**: registerDto
-      - **Source**: body 
-    
-
-,- **Path**: 'login'
-- **Method**: Post
-- **Entries**:
-  
-    - **Name**: 
-      - **Type**: loginDto
-      - **Source**: body 
-    
-
-
-
-<h4>🧭 Controller: /friends </h4>
-
-#### 📌 Endpoints:
-
-- **Path**: ""
-- **Method**: Get
-
-,- **Path**: "requests"
-- **Method**: Get
-
-,- **Path**: "add"
-- **Method**: Get
-- **Entries**:
-  
-    - **Name**: "userId"
-      - **Type**: userId
-      - **Source**: query 
-    
-
-,- **Path**: "accept"
-- **Method**: Get
-- **Entries**:
-  
-    - **Name**: "userId"
-      - **Type**: userId
-      - **Source**: query 
-    
-
-
-
-<h4>🧭 Controller: /users </h4>
-
-#### 📌 Endpoints:
-
-- **Path**: "search"
-- **Method**: Get
-- **Entries**:
-  
-    - **Name**: "firstName"
-      - **Type**: firstName
-      - **Source**: query 
-    
-
-    - **Name**: "lastName"
-      - **Type**: lastName
-      - **Source**: query 
-    
-
-    - **Name**: "email"
-      - **Type**: email
-      - **Source**: query 
-    
-
-    - **Name**: "age"
-      - **Type**: age
-      - **Source**: query 
-    
-
-
-
-<h3 style="color: #03A9F4; text-align: center;  border-bottom: 1px solid #4CAF50;">🌐 Environment variables</h3>
-
-- DATABASE_URL: Your Database url
-- JWT_SECRET: Your Jwt secret
-  
-<h3 style="color: #03A9F4; text-align: center;  border-bottom: 1px solid #4CAF50;">Installation</h3>
-
+1. Install Node.js and npm on your computer.
+2. Clone this repository with command
 ```bash
- npm run install
-```,
-<h3 style="color: #03A9F4; text-align: center;  border-bottom: 1px solid #4CAF50;">Running</h3>
-
-```bash
- # development
- npm run start
- # watch mode
- npm run start:dev
+ git clone https://github.com/Arman2409/social-app-api.git
 ```
+3. Install dependencies with command
+```bash
+  npm install
+```
+ or 
+```bash
+  pnpm install
+```
+4. Add environment variables
+- DATABASE_URL: Your PostgreSQL Database url
+- JWT_SECRET: Your Jwt secret
+
+5. After you have functional PostgreSQL database's URL in your .env file you can 
+run this commands to set the database
+```bash
+  npx prisma generate
+  npx prisma migrate dev
+```
+
+6. Now you are done to run the project
+```bash
+  npm run start:dev
+```
+
+#### Structure 
+
+/prisma      # Database configuration and schemas
+/src         # TypeScript codebase
+  /dto       # DTOs for validation
+  /modules   # Core modules
+    /auth    # Handles functionalities like login and register
+    /users   # Handles functionalities like user search
+    /friends # Handles functionalities like sending friend requests, accepting them, etc.
+  /tools     # Utility services, guards, and other helpers
+
+#### Tech stack
+
+> Programming languages: JavaScript, TypeScript
+> Framework: Nest.js
+> Database and ORM:  PostgreSQL, Prisma
+> Validation and security:  Class Validator, JWT, Bcrypt
