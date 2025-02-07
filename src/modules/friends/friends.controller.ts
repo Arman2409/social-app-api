@@ -1,10 +1,12 @@
-import { Controller, Get, Query, Res } from '@nestjs/common';
+import { Controller, Get, Query, Res, UseGuards } from '@nestjs/common';
 import type { Response } from 'express';
 import type { User } from '@prisma/client';
 
+import { AuthGuard } from '../../tools/auth.guard';
 import { Authorization } from '../../tools/authorization.decorator';
 import { FriendsService } from './friends.service';
 
+@UseGuards(AuthGuard)
 @Controller('friends')
 export class FriendsController {
     constructor(
