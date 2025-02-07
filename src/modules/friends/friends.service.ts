@@ -7,17 +7,19 @@ import {
 import type { User } from '@prisma/client';
 import type { Response } from 'express';
 
-import { PrismaService } from '../../tools/database.service';
-import { LoggerService } from '../../tools/logger.service';
+import { PrismaService } from '../../tools/services/database.service';
+import { LoggerService } from '../../tools/services/logger.service';
 
 @Injectable()
 export class FriendsService {
     constructor(
-        private prisma: PrismaService,
-        private logger: LoggerService
+        private prisma: PrismaService, private logger: LoggerService
     ) { }
 
-    async addFriend(res: Response, user: User, friendId: string) {
+    async addFriend(
+        res: Response,
+        user: User,
+        friendId: string) {
         const { id: userId } = { ...user };
 
         try {
@@ -27,6 +29,17 @@ export class FriendsService {
 
             if (friendId === userId) {
                 throw new BadRequestException("Can't send friend request yourself");
+            }
+
+            //   Check if the friend actually exists 
+            const friend = await this.prisma.user.findUnique({
+                where: {
+                    id: friendId
+                }
+            });
+
+            if (!friend) {
+                throw new BadRequestException("User with given ID not found")
             }
 
             await this.prisma.friendRequest.create({
@@ -39,6 +52,10 @@ export class FriendsService {
 
             return res.status(HttpStatus.OK).end();
         } catch (err) {
+            if (err instanceof BadRequestException) {
+                throw err;
+            }
+
             this.logger.error(
                 `Failed to create friend request, user ID: ${userId}, friend ID:${friendId}, error: ${err}`,
             );
@@ -55,19 +72,25 @@ export class FriendsService {
                 where: {
                     toId: userId,
                 },
+                orderBy: {
+                    createdAt: 'desc',
+                },
             });
 
             return res.status(HttpStatus.OK).send(result);
         } catch (err) {
             this.logger.error(
-                `Failed to get friend request, user ID: ${userId}, error: ${err}`,
+                `Failed to get friend requests, user ID: ${userId}, error: ${err}`,
             );
 
-            throw new InternalServerErrorException('Failed to get friend request');
+            throw new InternalServerErrorException('Failed to get friend requests');
         }
     }
 
-    async acceptRequest(res: Response, user: User, friendId: string) {
+    async acceptRequest(
+        res: Response,
+        user: User,
+        friendId: string) {
         const { id: userId } = { ...user };
 
         try {
@@ -102,8 +125,14 @@ export class FriendsService {
                 }),
             ]);
 
+            logger.info(`Friend request accepted, user ID: ${userId}, user email: ${user.email}, friend ID: ${friendId}`);
+
             return res.status(HttpStatus.CREATED).end();
         } catch (err) {
+            if (err instanceof BadRequestException) {
+                throw err;
+            }
+
             this.logger.error(
                 `Error accepting request, user ID: ${userId}, friend ID: ${friendId}, error: ${err}`,
             );
@@ -116,6 +145,7 @@ export class FriendsService {
         const { id: userId } = { ...user };
 
         try {
+            // Get user and the friends with relation 
             const userData = await this.prisma.user.findUnique({
                 where: {
                     id: userId,
@@ -126,15 +156,16 @@ export class FriendsService {
                 },
             });
 
+            // Put all the friends into one array 
             const allFriends = [...userData.friends, ...userData.friendOf];
 
-            return allFriends;
+            return res.status(HttpStatus.OK).send(allFriends);
         } catch (err) {
             this.logger.error(
                 `Error getting friends, user ID: ${userId}, error: ${err}`,
             );
 
-            throw new InternalServerErrorException('Failed to get friends');
+            throw new InternalServerErrorException('Failed to get the friends');
         }
     }
 }

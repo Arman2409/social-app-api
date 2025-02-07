@@ -2,21 +2,22 @@ import { Injectable, Logger } from '@nestjs/common';
 import {
   appendFileSync,
   existsSync,
-  mkdir,
   mkdirSync,
   writeFileSync,
 } from 'fs';
+
+const ERROR_LOGS_PATH = './logs/errors.log';
 
 @Injectable()
 export class LoggerService {
   private readonly logger = new Logger();
 
   constructor() {
-    if (!existsSync('./logs/errors.log')) {
+    if (!existsSync(ERROR_LOGS_PATH)) {
       if (!existsSync('./logs')) {
         mkdirSync('./logs');
-        writeFileSync('./logs/errors.log', '');
       }
+      writeFileSync(ERROR_LOGS_PATH, '');
     }
   }
 
@@ -27,7 +28,7 @@ export class LoggerService {
   error(message: string) {
     this.logger.error(message);
     appendFileSync(
-      './logs/errors.log',
+      ERROR_LOGS_PATH,
       `${new Date().toISOString()} - ${message} \n \n`,
     );
   }

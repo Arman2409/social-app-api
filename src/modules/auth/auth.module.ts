@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 
+import { PrismaService } from '../../tools/services/database.service';
+import { LoggerService } from '../../tools/services/logger.service';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
-import { PrismaService } from '../../tools/database.service';
-import { LoggerService } from '../../tools/logger.service';
 
 @Module({
   imports: [

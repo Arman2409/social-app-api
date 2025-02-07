@@ -3,57 +3,45 @@ import {
   CanActivate,
   ExecutionContext,
   UnauthorizedException,
-  createParamDecorator,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-
-export const Authorization = createParamDecorator((_, request: any) => {
-  const authorization = request.args[0].rawHeaders[1];
-  const accessToken = authorization.split(' ')[1];
-
-  try {
-    const decoded = new JwtService().decode(accessToken);
-
-    return decoded;
-  } catch (ex) {
-    throw new UnauthorizedException();
-  }
-});
 
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(
     private readonly jwtService: JwtService
-  ) {}
+  ) { }
 
   canActivate(context: ExecutionContext): boolean {
     const request = context.switchToHttp().getRequest();
 
+    // Check for authorization header to be present 
     if (!request.headers.authorization) {
       throw new UnauthorizedException('Token missing');
     }
 
+    // Get the token from the headers 
     const token = request.headers.authorization.split(' ')[1];
 
     try {
+      if (!this.jwtService.verify(token, { secret: process.env.JWT_SECRET })) {
+        throw new UnauthorizedException('Not Authenticated');
+      }
+
+      // Decode the token 
       const decoded = this.jwtService.decode(token);
 
       const { expiresIn = '' } = { ...decoded };
 
+      // Check for expiration date 
       if (!expiresIn) {
         throw new UnauthorizedException('Wrong credentials');
       }
 
+      // Check if token has expired
       if (Number(expiresIn) < Date.now()) {
         throw new UnauthorizedException('Session expired');
       }
-
-      request.hello = 'Hello';
-      request.res.hello = 'Hello';
-      request.res.locals = {
-        hello: 'Hello',
-      };
-      request.myData = 'sdsf';
 
       return true;
     } catch (error) {

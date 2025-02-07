@@ -1,4 +1,5 @@
 import {
+    HttpStatus,
     Injectable,
     InternalServerErrorException,
     NotFoundException,
@@ -6,12 +7,11 @@ import {
     UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { HttpStatusCode } from 'axios';
 import * as bcrypt from 'bcrypt';
 import type { Response } from 'express';
 
-import { LoggerService } from '../../tools/logger.service';
-import { PrismaService } from '../../tools/database.service';
+import { LoggerService } from '../../tools/services/logger.service';
+import { PrismaService } from '../../tools/services/database.service';
 import { LoginDTO, RegisterDTO } from '../../dto/auth';
 
 @Injectable()
@@ -31,6 +31,7 @@ export class AuthService {
         try {
             const { logger, prisma } = { ...this };
 
+            // Check if the email is already used  
             const existingUser = await prisma.user.findUnique({
                 where: {
                     email,
@@ -42,6 +43,7 @@ export class AuthService {
                 throw new UnauthorizedException('User with email already exists');
             }
 
+            // Create hashed password for the user 
             const hashedPassword = await bcrypt.hash(password, 10);
 
             await prisma.user.create({
@@ -56,7 +58,7 @@ export class AuthService {
 
             logger.info(`User created, email: ${email}`);
 
-            return res.status(HttpStatusCode.Created).end();
+            return res.status(HttpStatus.CREATED).end();
         } catch (error) {
             if (error instanceof UnauthorizedException) {
                 throw error;
@@ -65,7 +67,7 @@ export class AuthService {
             this.logger.error(
                 `Error while registering the user, user email: ${email}, error: ${error}`,
             );
-            throw new InternalServerErrorException('Internal Server Error');
+            throw new InternalServerErrorException('Failed to create a user');
         }
     }
 
@@ -76,6 +78,7 @@ export class AuthService {
         const { email, password } = { ...loginDto };
 
         try {
+            // Check if an user with the email exists 
             const user = await this.prisma.user.findUnique({
                 where: {
                     email,
@@ -87,14 +90,22 @@ export class AuthService {
                 throw new NotFoundException('User not found');
             }
 
+            // Compare the password from request body and database with Bcrypt 
             if (await bcrypt.compare(password, user.password)) {
-                const { password, createdAt, age, ...result } = { ...user };
 
+                // Take the properties from the user which have to be sent to the client
+                const { id, firstName, lastName, email, age } = { ...user };
+
+                // Get new expiration date for the token 
                 const expiresIn = Date.now() + 24 * 60 * 60 * 1000;
 
+                // Get the token 
                 const token = this.jwtService.sign(
                     JSON.stringify({
-                        ...result,
+                        id,
+                        firstName,
+                        lastName,
+                        email,
                         expiresIn,
                         ...(age ? { age } : {}),
                     }),
@@ -103,13 +114,14 @@ export class AuthService {
                     },
                 );
 
-                return res.status(200).send({
+                return res.status(HttpStatus.OK).send({
                     token,
                 });
             }
 
             throw new UnauthorizedException('Invalid password');
         } catch (error) {
+            // Check if the error is one of the HTTP errors or another error  
             if (
                 error instanceof NotFoundException ||
                 error instanceof UnauthorizedException
@@ -120,7 +132,7 @@ export class AuthService {
             this.logger.error(
                 `Error while signing in the user, user email: ${email}, error: ${error}`,
             );
-            throw new InternalServerErrorException('Internal Server Error');
+            throw new InternalServerErrorException('Failed to log in');
         }
     }
 }

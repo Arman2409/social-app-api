@@ -35,18 +35,18 @@ run this commands to set the database
 
 #### Structure 
 
-/prisma      # Database configuration and schemas
-/src         # TypeScript codebase
-  /dto       # DTOs for validation
-  /modules   # Core modules
-    /auth    # Handles functionalities like login and register
-    /users   # Handles functionalities like user search
-    /friends # Handles functionalities like sending friend requests, accepting them, etc.
-  /tools     # Utility services, guards, and other helpers
+/prisma      # Database configuration and schemas  
+/src         # TypeScript codebase  
+  /dto       # DTOs for validation  
+  /modules   # Core modules  
+    /auth    # Handles functionalities like login and register  
+    /users   # Handles functionalities like user search  
+    /friends # Handles functionalities like sending friend requests, accepting them,  etc.  
+  /tools     # Utility services, guards, and other helpers  
 
 #### Tech stack
 
-> Programming languages: JavaScript, TypeScript
-> Framework: Nest.js
-> Database and ORM:  PostgreSQL, Prisma
-> Validation and security:  Class Validator, JWT, Bcrypt
+> Programming languages: JavaScript, TypeScript 
+> Framework: Nest.js  
+> Database and ORM:  PostgreSQL, Prisma  
+> Validation and security:  Class Validator, JWT, Bcrypt  

@@ -3,8 +3,8 @@ import { JwtService } from '@nestjs/jwt';
 
 import { UsersService } from './users.service';
 import { UsersController } from './users.controller';
-import { PrismaService } from '../../tools/database.service';
-import { LoggerService } from '../../tools/logger.service';
+import { PrismaService } from '../../tools/services/database.service';
+import { LoggerService } from '../../tools/services/logger.service';
 
 @Module({
   providers: [UsersService, JwtService, PrismaService, LoggerService],
